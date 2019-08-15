@@ -17,7 +17,6 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-gap: 30px;
-
 }
 
 .configuracoes-container form ul li {
@@ -49,7 +48,7 @@
 
 .configuracoes-container form button {
     margin: 50px auto;
-    width: 500px;
+    width: 505px;
     margin-top: 10px;
     border: 0;
     border-radius: 4px;
@@ -72,7 +71,7 @@
     list-style: none;   
 }
 
-.transicoes-container ul li {
+.transicoes-container ul li .element {
     display: inline;
     margin-left: 20px;
 }
@@ -89,4 +88,16 @@
 
 .transicoes-container ul li .button {
     margin-left: 10px;
+}
+
+.transicoes-container ul .btn {
+    width: 650px;
+    margin: 30px auto;
+    border: 0;
+    height: 50px;
+    font-size: 16px;
+    background: #1678C2;
+    font-weight: bold;
+    color: #FFF;
+    cursor: pointer;
 }

@@ -21,9 +21,6 @@ export default function App() {
         {'key': 3, 'text': 'S', 'value': 3}
     ]
 
-    // quantidade de transições
-    const [transicoes, setTransicoes] = useState(1);
-
     // estado inicial da transição
     const [estadoIncialTransicao, setEstadoIncialTransicao] = useState([]);
 
@@ -31,7 +28,7 @@ export default function App() {
     const [letraIncialTransicao, setLetraIncialTransicao] = useState([]);
 
     // estado final da transição
-    const [letraFinalTransicao, setLetraFinalTransicao] = useState([]);
+    const [estadoFinalTransicao, setestadoFinalTransicao] = useState([]);
 
     // letra a ser substituida
     const [letraSubstituicao, setLetraSubstituicao] = useState([]);
@@ -42,11 +39,79 @@ export default function App() {
     // bool error
     const [error, setError] = useState(true);
 
-    // mensagem de erro
-    const [errorMessage, setErrorMessage] = useState([]);
+    // transições tamanho
+    const [size, setSize] = useState(1);
 
-    const [boolEstadoInicial, setBoolEstadoInicial] = useState(false);
-    const [boolEstadoFinal, setBoolEstadoFinal] = useState(false);
+    // lista de transições
+    const [transicoes, setTransicao] = useState([])
+
+    async function handleTransicao(e) {
+        e.preventDefault();
+
+        const eit = await estadoIncialTransicao;
+        const lit = await letraIncialTransicao;
+        const eft = await estadoFinalTransicao;
+        const ls = await letraSubstituicao;
+        const dir = await direcao;
+
+        const obj = await {
+            'id': transicoes.length,
+            'estadoInicial': eit,
+            'letraInicial': lit,
+            'estadoFinal': eft,
+            'letraSubstituir': ls,
+            'direcao': dir
+        };
+
+        await setTransicao([...transicoes, await obj]);
+    }
+
+    async function handleOnChangeEstadoInicial(e, data) {
+        e.preventDefault();
+        const value = await data.value;
+        const object = await optionsEstados[value-1];
+        const text = await object.text;
+        await setEstadoIncialTransicao(text);
+    }
+
+    async function handleOnChangeLetraInicial(e, data) {
+        e.preventDefault();
+        const value = await data.value;
+        const object = await optionsLetras[value-1];
+        const text = await object.text;
+        await setLetraIncialTransicao(text);
+    }
+
+    async function handleOnChangeEstadoFinal(e, data) {
+        e.preventDefault();
+        const value = await data.value;
+        const object = await optionsEstados[value-1];
+        const text = await object.text;
+        await setestadoFinalTransicao(text);
+    }
+
+    async function handleOnChangeSubstituir(e, data) {
+        e.preventDefault();
+        const value = await data.value;
+        const object = await optionsLetras[value-1];
+        const text = await object.text;
+        await setLetraSubstituicao(text);
+    }
+
+    async function handleDirecao(e, data) {
+        e.preventDefault();
+        const value = await data.value;
+        const object = await optionsTuringMachine[value-1];
+        const text = await object.text;
+        await setDirecao(text);
+    }
+
+    async function handleAdd(e) {
+        e.preventDefault();
+        const newSize = size + 1;
+        setSize(newSize);
+        console.log(size);
+    }
 
     async function handleConfiguracao(e) {
         e.preventDefault();
@@ -87,6 +152,7 @@ export default function App() {
                     'value': count2
                 };
                 array2.push(obj);
+                count2++;
             });
             await setOptionsLetras(array2);
         } else {
@@ -104,7 +170,6 @@ export default function App() {
                                 <li>
                                     <label>Conjunto Q</label>
                                     <input
-                                        className={`input ${1 && 'is-danger'}`}
                                         placeholder="q0,q1,q2....q7"
                                         value={conjuntoQ}
                                         onChange={e => setConjuntoQ(e.target.value)}
@@ -187,9 +252,6 @@ export default function App() {
                                 disabled={true}
                                 compact={true} />
                                 <label>)</label>
-                                <Button primary
-                                    circular={true} active={false}
-                                    className={'button'}>Nova transição</Button>
                             </li>
                         </ul>
                     </div>
@@ -197,39 +259,132 @@ export default function App() {
                         <div className="transicoes-container">
                         <h1>δ</h1>
                         <ul>
-                            <li>
-                                <label>(</label>
-                                <Dropdown clearable text={'↓'}
-                                options={optionsEstados}
-                                selection className={'dropdown'}
-                                compact={true} />
-                                <label>X</label>
-                                <Dropdown clearable text={'↓'}
-                                options={optionsLetras}
-                                selection className={'dropdown'}
-                                compact={true} />
-                                <label>)</label>
-                                <label>→</label>
-                                <label>(</label>
-                                <Dropdown clearable text={'↓'}
-                                options={optionsEstados}
-                                selection className={'dropdown'}
-                                compact={true} />
-                                <Dropdown clearable text={'↓'}
-                                options={optionsLetras}
-                                selection className={'dropdown'}
-                                compact={true} />
-                                <Dropdown clearable text={'L'}
-                                options={optionsTuringMachine}
-                                selection className={'dropdown'}
-                                compact={true} />
-                                <label>)</label>
-                                <Button primary
-                                    circular={true}
-                                    className={'button'}>Nova transição</Button>
-                                {console.log(optionsEstados)}
-                            </li>
+                            {transicoes.length === 0 ?
+                                <ul>
+                                    <li key={0} className={'element'}>
+                                        <label>(</label>
+                                        <Dropdown clearable
+                                        options={optionsEstados}
+                                        onChange={handleOnChangeEstadoInicial}
+                                        selection className={'dropdown'}
+                                        compact={true} />
+                                        <label>X</label>
+                                        <Dropdown clearable
+                                        options={optionsLetras}
+                                        onChange={handleOnChangeLetraInicial}
+                                        selection className={'dropdown'}
+                                        compact={true} />
+                                        <label>)</label>
+                                        <label>→</label>
+                                        <label>(</label>
+                                        <Dropdown clearable
+                                        options={optionsEstados}
+                                        onChange={handleOnChangeEstadoFinal}
+                                        selection className={'dropdown'}
+                                        compact={true} />
+                                        <Dropdown clearable
+                                        options={optionsLetras}
+                                        onChange={handleOnChangeSubstituir}
+                                        selection className={'dropdown'}
+                                        compact={true} />
+                                        <Dropdown clearable
+                                        onChange={handleDirecao}
+                                        options={optionsTuringMachine}
+                                        selection className={'dropdown'}
+                                        compact={true} />
+                                        <label>)</label>                                
+                                        <Button primary
+                                            circular={true} onClick={handleTransicao}
+                                            className={'button'}>Nova transição</Button>
+                                    </li>
+                                </ul>
+                            :
+                                transicoes.map((transicao, index) => {
+                                    console.log(transicao)
+                                    return index === (transicoes.length - 1) ?
+                                        <ul key={index + 2123}>
+                                            <li key={transicao.id} className={'element'}>
+                                                <label>(</label>
+                                                <Dropdown clearable
+                                                options={optionsEstados}
+                                                onChange={handleOnChangeEstadoInicial}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>X</label>
+                                                <Dropdown clearable
+                                                options={optionsLetras}
+                                                onChange={handleOnChangeLetraInicial}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>)</label>
+                                                <label>→</label>
+                                                <label>(</label>
+                                                <Dropdown clearable
+                                                options={optionsEstados}
+                                                onChange={handleOnChangeEstadoFinal}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <Dropdown clearable
+                                                options={optionsLetras}
+                                                onChange={handleOnChangeSubstituir}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <Dropdown clearable
+                                                onChange={handleDirecao}
+                                                options={optionsTuringMachine}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>)</label>                                
+                                                <Button primary
+                                                    circular={true} onClick={handleTransicao}
+                                                    className={'button'}>Nova transição</Button>
+                                            </li>
+                                        </ul>
+                                    :
+                                        <ul key={index + 353}>
+                                            <li key={transicao.id} className={'element'}>
+                                                <label>(</label>
+                                                <Dropdown clearable
+                                                options={optionsEstados}
+                                                text={transicao.estadoIncialTransicao}
+                                                onChange={handleOnChangeEstadoInicial}
+                                                value={transicao.estadoInicial}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>X</label>
+                                                <Dropdown clearable
+                                                options={optionsLetras}
+                                                onChange={handleOnChangeLetraInicial}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>)</label>
+                                                <label>→</label>
+                                                <label>(</label>
+                                                <Dropdown clearable
+                                                options={optionsEstados}
+                                                onChange={handleOnChangeEstadoFinal}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <Dropdown clearable
+                                                options={optionsLetras}
+                                                onChange={handleOnChangeSubstituir}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <Dropdown clearable
+                                                onChange={handleDirecao}
+                                                options={optionsTuringMachine}
+                                                selection className={'dropdown'}
+                                                compact={true} />
+                                                <label>)</label>                                
+                                            </li>
+                                        </ul>
+                                    })
+                            }                            
+                            <Button primary onClick={handleAdd}
+                                className={'btn'}>Substituir
+                            </Button>
                         </ul>
+                        
                     </div>
                     )}
                 </li>
