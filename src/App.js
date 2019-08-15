@@ -22,25 +22,22 @@ export default function App() {
     ]
 
     // estado inicial da transição
-    const [estadoIncialTransicao, setEstadoIncialTransicao] = useState([]);
+    const [estadoIncialTransicao, setEstadoIncialTransicao] = useState('');
 
     // letra inicial da transição
-    const [letraIncialTransicao, setLetraIncialTransicao] = useState([]);
+    const [letraIncialTransicao, setLetraIncialTransicao] = useState('');
 
     // estado final da transição
-    const [estadoFinalTransicao, setestadoFinalTransicao] = useState([]);
+    const [estadoFinalTransicao, setestadoFinalTransicao] = useState('');
 
     // letra a ser substituida
-    const [letraSubstituicao, setLetraSubstituicao] = useState([]);
+    const [letraSubstituicao, setLetraSubstituicao] = useState('');
 
     // Right, Left ou Stop
-    const [direcao, setDirecao] = useState([]);
+    const [direcao, setDirecao] = useState('');
     
     // bool error
     const [error, setError] = useState(true);
-
-    // transições tamanho
-    const [size, setSize] = useState(1);
 
     // lista de transições
     const [transicoes, setTransicao] = useState([])
@@ -106,11 +103,59 @@ export default function App() {
         await setDirecao(text);
     }
 
-    async function handleAdd(e) {
+    function checkTrue(bool) {
+        return bool === true;
+    }
+
+    async function handleMaquina(e) {
         e.preventDefault();
-        const newSize = size + 1;
-        setSize(newSize);
-        console.log(size);
+        
+        const arrTransicoes = transicoes;
+        console.log(arrTransicoes);
+        const arrayPalavra = palavraInicial.split('');
+        var transicoesEstadoInicial = [];
+
+        // transicoesEstadoInicial recebe todas os objetos com estado incial
+        arrTransicoes.forEach(element => {
+            if (element.estadoInicial === estadoInicial) {
+                transicoesEstadoInicial.push(element);
+            }
+        });
+
+        arrayPalavra.forEach(letra => {
+            const check = transicoesEstadoInicial.map(element => {
+                if (letra === element.letraInicial) {
+                    console.log('achou');
+                    return true;
+                }
+                return false;
+            });
+
+            const index = check.findIndex(checkTrue); // mesmo indice da transição
+            console.log(index);
+            console.log(transicoesEstadoInicial[index]);
+        
+            //console.log(letra, check);
+        });
+
+        /*
+        arrTransicoes.forEach(element => {
+            const data = element;
+            var check = check(data.estadoInicial, );
+        });
+        */
+
+        /*
+        transicoesEstadoInicial.forEach(element => {
+            arrayPalavra.forEach(letra => {
+                if (element.palavraInicial === letra) {
+                    console.log(element);
+                }
+            });
+        });
+        */
+
+        console.log(transicoesEstadoInicial);
     }
 
     async function handleConfiguracao(e) {
@@ -145,6 +190,15 @@ export default function App() {
 
             var count2 = 1;
             var array2 = [];
+
+            array2.push({
+                'key': count2,
+                'text': vazio,
+                'value': count2
+            })
+            
+            count2++;
+
             arrayAlfabeto.forEach(element => {
                 var obj = {
                     'key': count2,
@@ -223,7 +277,6 @@ export default function App() {
                 <li>
                     {error ? (
                         <div className="transicoes-container">
-                        <h1>δ</h1>
                         <ul>
                             <li>
                                 <label>(</label>
@@ -257,134 +310,72 @@ export default function App() {
                     </div>
                     ) : (
                         <div className="transicoes-container">
-                        <h1>δ</h1>
                         <ul>
-                            {transicoes.length === 0 ?
-                                <ul>
-                                    <li key={0} className={'element'}>
-                                        <label>(</label>
-                                        <Dropdown clearable
-                                        options={optionsEstados}
-                                        onChange={handleOnChangeEstadoInicial}
-                                        selection className={'dropdown'}
-                                        compact={true} />
-                                        <label>X</label>
-                                        <Dropdown clearable
-                                        options={optionsLetras}
-                                        onChange={handleOnChangeLetraInicial}
-                                        selection className={'dropdown'}
-                                        compact={true} />
-                                        <label>)</label>
-                                        <label>→</label>
-                                        <label>(</label>
-                                        <Dropdown clearable
-                                        options={optionsEstados}
-                                        onChange={handleOnChangeEstadoFinal}
-                                        selection className={'dropdown'}
-                                        compact={true} />
-                                        <Dropdown clearable
-                                        options={optionsLetras}
-                                        onChange={handleOnChangeSubstituir}
-                                        selection className={'dropdown'}
-                                        compact={true} />
-                                        <Dropdown clearable
-                                        onChange={handleDirecao}
-                                        options={optionsTuringMachine}
-                                        selection className={'dropdown'}
-                                        compact={true} />
-                                        <label>)</label>                                
-                                        <Button primary
-                                            circular={true} onClick={handleTransicao}
-                                            className={'button'}>Nova transição</Button>
-                                    </li>
-                                </ul>
-                            :
-                                transicoes.map((transicao, index) => {
-                                    console.log(transicao)
-                                    return index === (transicoes.length - 1) ?
-                                        <ul key={index + 2123}>
-                                            <li key={transicao.id} className={'element'}>
-                                                <label>(</label>
-                                                <Dropdown clearable
-                                                options={optionsEstados}
-                                                onChange={handleOnChangeEstadoInicial}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>X</label>
-                                                <Dropdown clearable
-                                                options={optionsLetras}
-                                                onChange={handleOnChangeLetraInicial}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>)</label>
-                                                <label>→</label>
-                                                <label>(</label>
-                                                <Dropdown clearable
-                                                options={optionsEstados}
-                                                onChange={handleOnChangeEstadoFinal}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <Dropdown clearable
-                                                options={optionsLetras}
-                                                onChange={handleOnChangeSubstituir}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <Dropdown clearable
-                                                onChange={handleDirecao}
-                                                options={optionsTuringMachine}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>)</label>                                
-                                                <Button primary
-                                                    circular={true} onClick={handleTransicao}
-                                                    className={'button'}>Nova transição</Button>
-                                            </li>
-                                        </ul>
-                                    :
-                                        <ul key={index + 353}>
-                                            <li key={transicao.id} className={'element'}>
-                                                <label>(</label>
-                                                <Dropdown clearable
-                                                options={optionsEstados}
-                                                text={transicao.estadoIncialTransicao}
-                                                onChange={handleOnChangeEstadoInicial}
-                                                value={transicao.estadoInicial}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>X</label>
-                                                <Dropdown clearable
-                                                options={optionsLetras}
-                                                onChange={handleOnChangeLetraInicial}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>)</label>
-                                                <label>→</label>
-                                                <label>(</label>
-                                                <Dropdown clearable
-                                                options={optionsEstados}
-                                                onChange={handleOnChangeEstadoFinal}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <Dropdown clearable
-                                                options={optionsLetras}
-                                                onChange={handleOnChangeSubstituir}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <Dropdown clearable
-                                                onChange={handleDirecao}
-                                                options={optionsTuringMachine}
-                                                selection className={'dropdown'}
-                                                compact={true} />
-                                                <label>)</label>                                
-                                            </li>
-                                        </ul>
-                                    })
-                            }                            
-                            <Button primary onClick={handleAdd}
-                                className={'btn'}>Substituir
-                            </Button>
+                            <li className={'element'}>
+                                <label>(</label>
+                                <Dropdown clearable
+                                options={optionsEstados}
+                                onChange={handleOnChangeEstadoInicial}
+                                selection className={'dropdown'}
+                                compact={true} />
+                                <label>X</label>
+                                <Dropdown clearable
+                                options={optionsLetras}
+                                onChange={handleOnChangeLetraInicial}
+                                selection className={'dropdown'}
+                                compact={true} />
+                                <label>)</label>
+                                <label>→</label>
+                                <label>(</label>
+                                <Dropdown clearable
+                                options={optionsEstados}
+                                onChange={handleOnChangeEstadoFinal}
+                                selection className={'dropdown'}
+                                compact={true} />
+                                <Dropdown clearable
+                                options={optionsLetras}
+                                onChange={handleOnChangeSubstituir}
+                                selection className={'dropdown'}
+                                compact={true} />
+                                <Dropdown clearable
+                                onChange={handleDirecao}
+                                options={optionsTuringMachine}
+                                selection className={'dropdown'}
+                                compact={true} />
+                                <label>)</label>
+                                <Button primary
+                                circular={true} onClick={handleTransicao}
+                                className={'button'}>Salvar transição</Button>      
+                            </li>
                         </ul>
-                        
+                        <p>δ {'{'}</p>
+                        <ul className="transicoes">
+                        {transicoes.map((transicao, index) => {
+                            return index === (transicoes.length - 1) ?
+                                    <li key={index} className={'transicoes'}>
+                                        ({transicao.estadoInicial},
+                                        {transicao.letraInicial}) →
+                                        ({transicao.estadoFinal},
+                                        {transicao.letraSubstituir},
+                                        {transicao.direcao})
+                                    </li>
+                            : (
+                                <li key={index} className={'transicoes'}>
+                                    ({transicao.estadoInicial},
+                                    {transicao.letraInicial}) →
+                                    ({transicao.estadoFinal},
+                                    {transicao.letraSubstituir},
+                                    {transicao.direcao}),
+                                </li>
+                            )
+                        })}
+                    
+                        </ul>
+                        <p>{'}'}</p>
+
+                        <Button primary onClick={handleMaquina}
+                            className={'btn'}>Executar máquina de Turing
+                        </Button>
                     </div>
                     )}
                 </li>

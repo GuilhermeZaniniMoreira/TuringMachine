@@ -67,6 +67,10 @@
     grid-gap: 30px;
 }
 
+.transicoes-container {
+    padding-top: 50px;
+}
+
 .transicoes-container ul {
     list-style: none;   
 }
@@ -74,6 +78,7 @@
 .transicoes-container ul li .element {
     display: inline;
     margin-left: 20px;
+    padding-top: 5px;
 }
 
 .transicoes-container ul li label {
@@ -90,9 +95,19 @@
     margin-left: 10px;
 }
 
-.transicoes-container ul .btn {
+.transicoes-container ul .transicoes {
+    font-size: 32px;
+    margin-top: 15px;
+    margin-left: 100px;
+}
+
+.transicoes-container p {
+    font-size: 32px;
+}
+
+.transicoes-container .btn {
     width: 650px;
-    margin: 30px auto;
+    margin: 20px auto;
     border: 0;
     height: 50px;
     font-size: 16px;
