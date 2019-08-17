@@ -116,3 +116,12 @@
     color: #FFF;
     cursor: pointer;
 }
+
+div.palavra {
+    display: flex;
+    justify-content: center;
+}
+
+.palavra h1 {
+    font-size: 60px;
+}

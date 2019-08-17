@@ -42,6 +42,9 @@ export default function App() {
     // lista de transições
     const [transicoes, setTransicao] = useState([])
 
+    // palavra final
+    const [palavraFinal, setPalavraFinal] = useState('');
+
     async function handleTransicao(e) {
         e.preventDefault();
 
@@ -103,59 +106,108 @@ export default function App() {
         await setDirecao(text);
     }
 
-    function checkTrue(bool) {
-        return bool === true;
-    }
-
     async function handleMaquina(e) {
         e.preventDefault();
         
         const arrTransicoes = transicoes;
-        console.log(arrTransicoes);
         const arrayPalavra = palavraInicial.split('');
-        var transicoesEstadoInicial = [];
-
-        // transicoesEstadoInicial recebe todas os objetos com estado incial
-        arrTransicoes.forEach(element => {
-            if (element.estadoInicial === estadoInicial) {
-                transicoesEstadoInicial.push(element);
-            }
-        });
-
-        arrayPalavra.forEach(letra => {
-            const check = transicoesEstadoInicial.map(element => {
-                if (letra === element.letraInicial) {
-                    console.log('achou');
-                    return true;
-                }
-                return false;
-            });
-
-            const index = check.findIndex(checkTrue); // mesmo indice da transição
-            console.log(index);
-            console.log(transicoesEstadoInicial[index]);
+        const estados = conjuntoQ.split(',');
+        var objEstados = [];
         
-            //console.log(letra, check);
+        estados.forEach(estado => {
+            var obj = {[estado]: []};
+            objEstados.push(obj);
         });
 
-        /*
-        arrTransicoes.forEach(element => {
-            const data = element;
-            var check = check(data.estadoInicial, );
-        });
-        */
-
-        /*
-        transicoesEstadoInicial.forEach(element => {
-            arrayPalavra.forEach(letra => {
-                if (element.palavraInicial === letra) {
-                    console.log(element);
+        // separa transições pelo estado inicial
+        var objTranicoes = {}
+        objEstados.forEach((estado, index) => {
+            arrTransicoes.forEach(transicao => {
+                if (transicao.estadoInicial === Object.keys(estado)[0]) {
+                    var objectKey = Object.keys(estado)[0];
+                    if (objTranicoes[objectKey] === undefined) {
+                        objTranicoes[objectKey] = [];
+                        objTranicoes[objectKey].push({transicao})
+                    } else {
+                        objTranicoes[objectKey].push({transicao})
+                    }
                 }
             });
         });
-        */
 
-        console.log(transicoesEstadoInicial);
+        var programa = {}
+        for (var estado in objTranicoes) {
+            const value = await objTranicoes[estado];
+            value.forEach(element => {
+                const data = element.transicao;
+                var letraInicial = data.letraInicial;
+                var letraSubstituir = data.letraSubstituir;
+                var estadoFinal = data.estadoFinal;
+                var direcao = data.direcao;
+                if (direcao === 'R') {
+                    direcao = 1;
+                } else if (direcao === 'L') {
+                    direcao = -1;
+                } else if (direcao === 'S') {
+                    direcao = 0;
+                }
+
+                if (programa[estado] === undefined) {
+                    programa[estado] = [];
+                    programa[estado].push(
+                        {[letraInicial]: {"w": letraSubstituir, "m": direcao, "n": estadoFinal}}
+                    )
+                } else {
+                    programa[estado].push(
+                        {[letraInicial]: {"w": letraSubstituir, "m": direcao, "n": estadoFinal}}
+                    )
+                }
+            });
+        }
+        var palavraFinal = maquinaDeTuring(programa,palavraInicial,estadoFinal,
+                                            estadoInicial,0)
+        var str = ''
+        palavraFinal.forEach(element => {
+            str += element;
+        });
+
+        setPalavraFinal(str);
+        console.log(palavraFinal)
+    }
+
+    function find(element) {
+        return Object.keys(element)[0] === this;
+    }
+
+    function maquinaDeTuring(I,tape,end,state,current) {
+        var i = 0;
+        var arrayPalavra = tape.split('');
+        while(state !== end) {
+
+            const cell = arrayPalavra[i];
+            console.log('cell', cell)
+
+            var array = I[state];
+
+            if (cell === undefined) {
+                var indexVazio = array.findIndex(find, vazio);
+            } else {    
+                var index = array.findIndex(find, cell);
+            }
+            
+            current = (cell) ? array[index][cell] : array[indexVazio][vazio];
+            console.log('current', current)
+            if(!current)
+                return false;
+            arrayPalavra.splice(i, 1, current.w);
+            console.log('arrayPalavra', arrayPalavra);
+            i += current.m;
+            console.log('i', i);
+            state = current.n;
+            console.log('prox state', state);
+        }
+
+        return arrayPalavra;
     }
 
     async function handleConfiguracao(e) {
@@ -380,6 +432,16 @@ export default function App() {
                     )}
                 </li>
             </ul>
+            
+            <div className="palavra">
+                {palavraFinal !== '' ? (
+                    <h1>{palavraFinal}</h1>
+                ) : (
+                    <h2></h2>
+                )}
+                
+            </div>
+
         </div>
     );
 }
