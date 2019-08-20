@@ -110,10 +110,10 @@ export default function App() {
         e.preventDefault();
         
         const arrTransicoes = transicoes;
-        const arrayPalavra = palavraInicial.split('');
         const estados = conjuntoQ.split(',');
         var objEstados = [];
         
+        // criando objeto com todos os estados
         estados.forEach(estado => {
             var obj = {[estado]: []};
             objEstados.push(obj);
@@ -135,15 +135,18 @@ export default function App() {
             });
         });
 
-        var programa = {}
+        var programa = {};
+        // JSON programa
         for (var estado in objTranicoes) {
-            const value = await objTranicoes[estado];
+            const value = objTranicoes[estado];
+            // eslint-disable-next-line
             value.forEach(element => {
                 const data = element.transicao;
                 var letraInicial = data.letraInicial;
                 var letraSubstituir = data.letraSubstituir;
                 var estadoFinal = data.estadoFinal;
                 var direcao = data.direcao;
+
                 if (direcao === 'R') {
                     direcao = 1;
                 } else if (direcao === 'L') {
@@ -164,47 +167,45 @@ export default function App() {
                 }
             });
         }
-        var palavraFinal = maquinaDeTuring(programa,palavraInicial,estadoFinal,
-                                            estadoInicial,0)
+        
+        var palavraFinal = maquinaDeTuring(programa,
+                                            palavraInicial,
+                                            estadoFinal,
+                                            estadoInicial, 0)
         var str = ''
         palavraFinal.forEach(element => {
             str += element;
         });
 
         setPalavraFinal(str);
-        console.log(palavraFinal)
     }
 
     function find(element) {
         return Object.keys(element)[0] === this;
     }
 
-    function maquinaDeTuring(I,tape,end,state,current) {
+    function maquinaDeTuring(programa,fita,estadoFinal,estado,atual) {
         var i = 0;
-        var arrayPalavra = tape.split('');
-        while(state !== end) {
+        var arrayPalavra = fita.split('');
+        while(estado !== estadoFinal) {
+            const elemento = arrayPalavra[i];
+            var array = programa[estado];
 
-            const cell = arrayPalavra[i];
-            console.log('cell', cell)
-
-            var array = I[state];
-
-            if (cell === undefined) {
+            if (elemento === undefined) {
                 var indexVazio = array.findIndex(find, vazio);
             } else {    
-                var index = array.findIndex(find, cell);
+                var index = array.findIndex(find, elemento);
             }
-            
-            current = (cell) ? array[index][cell] : array[indexVazio][vazio];
-            console.log('current', current)
-            if(!current)
+
+            atual = (elemento) ? array[index][elemento] : array[indexVazio][vazio];
+
+            if(!atual) {
                 return false;
-            arrayPalavra.splice(i, 1, current.w);
-            console.log('arrayPalavra', arrayPalavra);
-            i += current.m;
-            console.log('i', i);
-            state = current.n;
-            console.log('prox state', state);
+            }
+
+            arrayPalavra.splice(i, 1, atual.w);
+            i += atual.m;
+            estado = atual.n;
         }
 
         return arrayPalavra;
@@ -425,9 +426,10 @@ export default function App() {
                         </ul>
                         <p>{'}'}</p>
 
-                        <Button primary onClick={handleMaquina}
-                            className={'btn'}>Executar máquina de Turing
-                        </Button>
+                        <Button primary
+                            onClick={handleMaquina}
+                            className={'btn'}>
+                            Executar máquina de Turing</Button>
                     </div>
                     )}
                 </li>
@@ -437,11 +439,9 @@ export default function App() {
                 {palavraFinal !== '' ? (
                     <h1>{palavraFinal}</h1>
                 ) : (
-                    <h2></h2>
+                    <h2> </h2>
                 )}
-                
             </div>
-
         </div>
     );
 }
