@@ -158,11 +158,15 @@ export default function App() {
                 if (programa[estado] === undefined) {
                     programa[estado] = [];
                     programa[estado].push(
-                        {[letraInicial]: {"w": letraSubstituir, "m": direcao, "n": estadoFinal}}
+                        {[letraInicial]: {"letraSubstituir": letraSubstituir,
+                                          "direcao": direcao,
+                                          "estadoFinalTransicao": estadoFinal}}
                     )
                 } else {
                     programa[estado].push(
-                        {[letraInicial]: {"w": letraSubstituir, "m": direcao, "n": estadoFinal}}
+                        {[letraInicial]: {"letraSubstituir": letraSubstituir,
+                                          "direcao": direcao,
+                                          "estadoFinalTransicao": estadoFinal}}
                     )
                 }
             });
@@ -190,10 +194,11 @@ export default function App() {
         while(estado !== estadoFinal) {
             const elemento = arrayPalavra[i];
             var array = programa[estado];
-
+            // elemento === undefined -> fim da palavra
+            // busca no estado atual qual é o indice da transição com vazio
             if (elemento === undefined) {
                 var indexVazio = array.findIndex(find, vazio);
-            } else {    
+            } else { // se elemento for uma letra
                 var index = array.findIndex(find, elemento);
             }
 
@@ -203,9 +208,10 @@ export default function App() {
                 return false;
             }
 
-            arrayPalavra.splice(i, 1, atual.w);
-            i += atual.m;
-            estado = atual.n;
+            // no indice i troca por atual->letraSubstituir | 1 -> irá excluir um elemento
+            arrayPalavra.splice(i, 1, atual.letraSubstituir);
+            i += atual.direcao; // i incrementa com o valor da direção
+            estado = atual.estadoFinalTransicao; // vai para o estado final da transição
         }
 
         return arrayPalavra;
