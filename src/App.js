@@ -176,12 +176,16 @@ export default function App() {
                                             palavraInicial,
                                             estadoFinal,
                                             estadoInicial, 0)
-        var str = ''
-        palavraFinal.forEach(element => {
-            str += element;
-        });
-
-        setPalavraFinal(str);
+        if (!palavraFinal) {
+            setPalavraFinal("Erro na máquina");
+        } else {
+            var str = '';
+            palavraFinal.forEach(element => {
+                str += element;
+            });
+            setPalavraFinal(str);
+        }
+        
     }
 
     function find(element) {
@@ -198,11 +202,17 @@ export default function App() {
             // busca no estado atual qual é o indice da transição com vazio
             if (elemento === undefined) {
                 var indexVazio = array.findIndex(find, vazio);
+                console.log(indexVazio);
             } else { // se elemento for uma letra
                 var index = array.findIndex(find, elemento);
             }
 
-            atual = (elemento) ? array[index][elemento] : array[indexVazio][vazio];
+            // se máquina não tiver transições com vazio mas elemento === undefined
+            if (indexVazio !== -1) {
+                atual = (elemento) ? array[index][elemento] : array[indexVazio][vazio];
+            } else {
+                return false;
+            }
 
             if(!atual) {
                 return false;
