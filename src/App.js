@@ -184,8 +184,7 @@ export default function App() {
                 str += element;
             });
             setPalavraFinal(str);
-        }
-        
+        }   
     }
 
     function find(element) {
