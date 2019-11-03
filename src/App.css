@@ -118,6 +118,7 @@
 }
 
 div.palavra {
+    padding-top: 50px;
     display: flex;
     justify-content: center;
 }
@@ -125,3 +126,17 @@ div.palavra {
 .palavra h1 {
     font-size: 60px;
 }
+
+/*
+.update {
+    width: 100px;
+    margin: 20px auto;
+    border: 0;
+    height: 35px;
+    font-size: 16px;
+    background: #1678C2;
+    font-weight: bold;
+    color: #FFF;
+    cursor: pointer;
+}
+*/

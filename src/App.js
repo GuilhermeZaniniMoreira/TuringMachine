@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'
 import { Dropdown, Button } from 'semantic-ui-react'
 import './App.css'
 import 'semantic-ui-css/semantic.min.css'
@@ -54,16 +55,24 @@ export default function App() {
         const ls = await letraSubstituicao;
         const dir = await direcao;
 
-        const obj = await {
-            'id': transicoes.length,
-            'estadoInicial': eit,
-            'letraInicial': lit,
-            'estadoFinal': eft,
-            'letraSubstituir': ls,
-            'direcao': dir
-        };
+        if (eit === estadoFinal) {
+            Swal.fire({
+                type: 'error',
+                title: 'Oops...',
+                text: 'Transição com estado final!',
+              })
+        } else {
+            const obj = await {
+                'id': transicoes.length,
+                'estadoInicial': eit,
+                'letraInicial': lit,
+                'estadoFinal': eft,
+                'letraSubstituir': ls,
+                'direcao': dir
+            };
 
-        await setTransicao([...transicoes, await obj]);
+            await setTransicao([...transicoes, await obj]);
+        }
     }
 
     async function handleOnChangeEstadoInicial(e, data) {
@@ -195,13 +204,12 @@ export default function App() {
         var i = 0;
         var arrayPalavra = fita.split('');
         while(estado !== estadoFinal) {
-            const elemento = arrayPalavra[i];
+            const elemento = arrayPalavra[i]; // começa pela primeira letra da palavra
             var array = programa[estado];
             // elemento === undefined -> fim da palavra
             // busca no estado atual qual é o indice da transição com vazio
             if (elemento === undefined) {
                 var indexVazio = array.findIndex(find, vazio);
-                console.log(indexVazio);
             } else { // se elemento for uma letra
                 var index = array.findIndex(find, elemento);
             }
@@ -209,15 +217,16 @@ export default function App() {
             // se máquina não tiver transições com vazio mas elemento === undefined
             if (indexVazio !== -1) {
                 atual = (elemento) ? array[index][elemento] : array[indexVazio][vazio];
-            } else {
+            } else { // se máquina tiver transição com vazio
                 return false;
             }
 
-            if(!atual) {
+            if (!atual) {
                 return false;
             }
 
-            // no indice i troca por atual->letraSubstituir | 1 -> irá excluir um elemento
+            // na posicao i troca por atual->letraSubstituir e remove atual
+            // 1 -> irá excluir um elemento
             arrayPalavra.splice(i, 1, atual.letraSubstituir);
             i += atual.direcao; // i incrementa com o valor da direção
             estado = atual.estadoFinalTransicao; // vai para o estado final da transição
@@ -280,6 +289,36 @@ export default function App() {
         } else {
             await setError(true);
         }
+    }
+
+    async function handleUpdate(index) {
+        Swal.mixin({
+            input: 'select',
+            confirmButtonText: 'Next &rarr;',
+            showCancelButton: true,
+            progressSteps: ['1', '2', '3', '4', '5']
+          }).queue([
+            'Estado inicial da transição',
+            'Leitura da fita',
+            'Estado final da transição',
+            'Substituição da fita',
+            'Direção'
+          ]).then((result) => {
+            if (result.value) {
+              Swal.fire({
+                title: 'Tudo certo!',
+                html:
+                    'Transição: <pre><code>' +
+                    `Estado inicial da transição: ${result.value[0]} <pre><code>` +
+                    `Leitura da fita: ${result.value[1]} <pre><code>` +
+                    `Estado final da transição: ${result.value[2]} <pre><code>` + 
+                    `Substituição da fita: ${result.value[3]} <pre><code>` +
+                    `Direção: ${result.value[4]} <pre><code>` +
+                  '</code></pre>',
+                confirmButtonText: 'Ok'
+              })
+            }
+        })
     }
 
     return (
@@ -426,14 +465,25 @@ export default function App() {
                                         ({transicao.estadoFinal},
                                         {transicao.letraSubstituir},
                                         {transicao.direcao})
+                                        
+                                        <Button circular
+                                            color='yellow'
+                                            onClick={() => handleUpdate(index)}
+                                            icon='edit' />
                                     </li>
                             : (
+
                                 <li key={index} className={'transicoes'}>
                                     ({transicao.estadoInicial},
                                     {transicao.letraInicial}) →
                                     ({transicao.estadoFinal},
                                     {transicao.letraSubstituir},
                                     {transicao.direcao}),
+
+                                    <Button circular
+                                        onClick={() => handleUpdate(index)}
+                                        color='yellow'
+                                        icon='edit' />
                                 </li>
                             )
                         })}
