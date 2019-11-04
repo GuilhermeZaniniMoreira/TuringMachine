@@ -412,6 +412,9 @@ export default function App() {
                                 disabled={true}
                                 compact={true} />
                                 <label>)</label>
+                                <Button disabled primary
+                                circular={true} onClick={handleTransicao}
+                                className={'button'}>Salvar transição</Button>      
                             </li>
                         </ul>
                     </div>
